@@ -1,0 +1,102 @@
+package rabbit;
+
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.DriverManager;
+
+import com.google.gson.Gson;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.QueueingConsumer.Delivery;
+
+//import net.sf.json.JSONArray;
+//import net.sf.json.JSONObject;
+
+/**
+ * 接收消息
+ * @author zhoufeng
+ *
+ */
+//class pos{
+//	public double x;
+	//public double y;
+//}
+public class Recv01 {
+	//public  Recv01 into(String str){
+		//JSONObject jsonObject = JSONObject.fromObject(str);
+		//JSONArray array=JSONArray.fromObject(str);
+		//Object[] obj=array.toArray();
+		//JSONObject obj1=JSONObject.fromObject(str);
+		//Json json=new Json();
+		//Recv01 oo=(Recv01)obj1.toBean(obj1,Recv01.class);
+		//Gson gson
+		//Gson gosn=new 
+		//}
+	public double x;
+	public double y;
+    public static void main(String[] args) throws Exception{
+        String sql;
+        String url="jdbc:mysql://localhost:3306/mysql";
+        String usr="root";
+        String pwd="";
+        ConnectionFactory connFac = new ConnectionFactory() ;
+        
+        connFac.setHost("127.0.0.1");
+        java.sql.Connection conn1=null;
+        
+        Connection conn = connFac.newConnection() ;
+        
+        Channel channel = conn.createChannel() ;
+        
+        String queueName = "queue01";
+        
+        channel.queueDeclare(queueName, false, false, false, null) ;
+        
+        //上面的部分，与Sender01是一样的
+      // try{
+    	Class.forName("com.mysql.jdbc.Driver");
+    	System.out.println("加载成功");
+    	conn1=DriverManager.getConnection(url, usr, pwd);
+    	Statement stmt=conn1.createStatement();
+       
+        //配置好获取消息的方式
+        QueueingConsumer consumer = new QueueingConsumer(channel) ;
+        channel.basicConsume(queueName, true, consumer) ;
+       // sql="create table pos1(x int(4) ,y int(4) )";
+       // stmt.executeUpdate(sql);
+        //循环获取消息
+        int i=0;
+        String sql1;
+        while(true){
+            
+            //获取消息，如果没有消息，这一步将会一直阻塞
+            Delivery delivery = consumer.nextDelivery() ;
+            
+            String msg = new String(delivery.getBody()) ;  
+            System.out.println(msg);
+            System.out.println("received message[" + msg + "] from " + queueName);
+          // JSONArray array=JSONArray.fromObject(msg);
+            //Object[] ob=array.toArray();
+            //JSONObject obj=JSONObject.fromObject(ob[i++]);
+            //Recv01 OO=(Recv01)obj.toBean(obj,Recv01.class);
+            //System.out.println(OO.x);
+           // sql="insert into pos1(x,y) values('"+OO.x+"','"+OO.y+"')";
+            Gson gson=new Gson();
+            Recv01 re=gson.fromJson(msg, Recv01.class);
+            //System.out.println(re.x);
+            sql1="insert into pos1 (x,y) values (+'"+re.x+"',"+re.y+"')";
+            stmt.executeUpdate(sql1);
+            
+            
+            
+            
+            
+            
+            
+        }
+       //}catch()
+    }
+    
+}

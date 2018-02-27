@@ -1,0 +1,11 @@
+package 解决方案;
+
+public class test {
+	public static void main(String[] args){
+		@SuppressWarnings("unused")
+		int i=-1;
+		int j=-2;
+		System.out.println(i+j);
+				
+	}
+}

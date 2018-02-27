@@ -1,0 +1,32 @@
+package 解决方案;
+
+import java.util.Scanner;
+
+public class Soltion {
+	 
+	public static void main(String[] args){
+		Scanner in=new Scanner(System.in);
+		
+		int line=in.nextInt();
+		String[] str=new String[line];
+		System.out.println(str.length);
+		for(int i=0;i<str.length;i++){
+			 str[i]=in.nextLine();
+		}
+		for(int i=0;i<line;i++){
+			String msg=str[i];
+			byte[] s=msg.getBytes();
+			if(str[i].length()==1){System.out.println(str[i]);}
+			if(str[i].length()>1){
+				String msg1="";
+				String msg2="";
+				for(int k=0;k<str[i].length();){msg1+=s[k];k+=2;}
+				for(int k=1;k<str[i].length();){msg2+=s[k];k+=2;}
+				System.out.println(msg1+" "+msg2);
+			}
+				
+		}
+	}
+			
+
+}

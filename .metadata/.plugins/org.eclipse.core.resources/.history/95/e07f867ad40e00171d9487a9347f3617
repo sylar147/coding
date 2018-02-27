@@ -1,0 +1,62 @@
+package mysql;
+
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+
+
+public class MysqlDemo {
+    public static void main(String[] args) throws Exception {
+        Connection conn = null;
+        String sql;
+        // MySQL鐨凧DBC URL缂栧啓鏂瑰紡锛歫dbc:mysql://涓绘満鍚嶇О锛氳繛鎺ョ鍙�/鏁版嵁搴撶殑鍚嶇О?鍙傛暟=鍊�
+        // 閬垮厤涓枃涔辩爜瑕佹寚瀹歶seUnicode鍜宑haracterEncoding
+        // 鎵ц鏁版嵁搴撴搷浣滀箣鍓嶈鍦ㄦ暟鎹簱绠＄悊绯荤粺涓婂垱寤轰竴涓暟鎹簱锛屽悕瀛楄嚜宸卞畾锛�
+        // 涓嬮潰璇彞涔嬪墠灏辫鍏堝垱寤簀avademo鏁版嵁搴�
+        String url = "jdbc:mysql://localhost:3306/mysql"
+                + "user=root&password=111111&useUnicode=true&characterEncoding=UTF8";
+
+        try {
+            // 涔嬫墍浠ヨ浣跨敤涓嬮潰杩欐潯璇彞锛屾槸鍥犱负瑕佷娇鐢∕ySQL鐨勯┍鍔紝鎵�浠ユ垜浠鎶婂畠椹卞姩璧锋潵锛�
+            // 鍙互閫氳繃Class.forName鎶婂畠鍔犺浇杩涘幓锛屼篃鍙互閫氳繃鍒濆鍖栨潵椹卞姩璧锋潵锛屼笅闈笁绉嶅舰寮忛兘鍙互
+            Class.forName("com.mysql.jdbc.Driver");// 鍔ㄦ�佸姞杞絤ysql椹卞姩
+            // or:
+            // com.mysql.jdbc.Driver driver = new com.mysql.jdbc.Driver();
+            // or锛�
+            // new com.mysql.jdbc.Driver();
+
+            System.out.println("鎴愬姛鍔犺浇MySQL椹卞姩绋嬪簭");
+            // 涓�涓狢onnection浠ｈ〃涓�涓暟鎹簱杩炴帴
+            conn = DriverManager.getConnection(url);
+            // Statement閲岄潰甯︽湁寰堝鏂规硶锛屾瘮濡俥xecuteUpdate鍙互瀹炵幇鎻掑叆锛屾洿鏂板拰鍒犻櫎绛�
+            Statement stmt = conn.createStatement();
+            sql = "create table student(NO char(20),name varchar(20),primary key(NO))";
+            int result = stmt.executeUpdate(sql);// executeUpdate璇彞浼氳繑鍥炰竴涓彈褰卞搷鐨勮鏁帮紝濡傛灉杩斿洖-1灏辨病鏈夋垚鍔�
+            if (result != -1) {
+                System.out.println("鍒涘缓鏁版嵁琛ㄦ垚鍔�");
+                sql = "insert into student(NO,name) values('2012001','闄朵紵鍩�')";
+                result = stmt.executeUpdate(sql);
+                sql = "insert into student(NO,name) values('2012002','鍛ㄥ皬淇�')";
+                result = stmt.executeUpdate(sql);
+                sql = "select * from student";
+                ResultSet rs = stmt.executeQuery(sql);// executeQuery浼氳繑鍥炵粨鏋滅殑闆嗗悎锛屽惁鍒欒繑鍥炵┖鍊�
+                System.out.println("瀛﹀彿\t濮撳悕");
+                while (rs.next()) {
+                    System.out
+                            .println(rs.getString(1) + "\t" + rs.getString(2));// 鍏ュ鏋滆繑鍥炵殑鏄痠nt绫诲瀷鍙互鐢╣etInt()
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("MySQL鎿嶄綔閿欒");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+        }
+
+    }
+
+}

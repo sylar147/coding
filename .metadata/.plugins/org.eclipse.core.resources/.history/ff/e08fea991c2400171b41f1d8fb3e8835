@@ -1,0 +1,112 @@
+package rabbit;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.DriverManager;
+import java.sql.Statement;
+ 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import com.google.gson.Gson;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.QueueingConsumer.Delivery;
+
+import rabbitmquser.User;
+
+//import me.gacl.test.Test1;
+
+//import net.sf.json.JSONArray;
+//import net.sf.json.JSONObject;
+
+/**
+ * 接收消息
+ * @author zhoufeng
+ *
+ */
+//class pos{
+//	public double x;
+	//public double y;
+//
+public class Recv01 {
+	//public double x;
+	//public double y;
+    public static void main(String[] args) throws Exception{
+    	//jdbc链接mysql
+        //String sql;
+       // String url="jdbc:mysql://localhost:3306/mysql";
+       // String usr="root";
+       // String pwd="";
+    	//框架链接mysql
+    	String resource = "conf.xml";
+    	InputStream is = Recv01.class.getClassLoader().getResourceAsStream(resource);
+    	SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(is);
+    	final SqlSession session = sessionFactory.openSession();
+    	 //rabbitmq的链接
+        ConnectionFactory connFac = new ConnectionFactory();
+        connFac.setHost("127.0.0.1");
+        java.sql.Connection conn1=null;
+        Connection conn = connFac.newConnection() ;
+        Channel channel = conn.createChannel() ;
+        String queueName = "queue01";
+        channel.queueDeclare(queueName,true, false, false, null) ; 
+        //上面的部分，与Sender01是一样的
+      // try{
+    	//Class.forName("com.mysql.jdbc.Driver");
+    	//System.out.println("加载成功");
+    	//conn1=DriverManager.getConnection(url, usr, pwd);
+        //Statement stmt=conn1.createStatement();       
+        //配置好获取消息的方式
+        //boolean autoack=false;
+ //       QueueingConsumer consumer = new QueueingConsumer(channel) ;
+ //       channel.basicConsume(queueName, autoack, consumer) ;
+       // sql="create table pos1(x int(4) ,y int(4) )";
+       // stmt.executeUpdate(sql);
+        //循环获取消息
+        String sql1;
+         final String state="rabbitmqmap.userMapper.insertUser";
+        final Gson gson=new Gson();
+        Consumer consumer1=new DefaultConsumer(channel){
+        	public void handleDelivery(String consumerTag,Envelope envelope,AMQP.BasicProperties properties,byte[] body)throws IOException
+        	{
+        		String message=new String(body,"UTF-8");
+        		System.out.println("reveive"+message+"from the queue");
+        		User user=gson.fromJson(message, User.class);
+                System.out.println(user.getx());
+        		session.insert(state);
+        		session.commit();
+        	}
+        };
+		
+        channel.basicConsume(queueName, true, consumer1);
+//        		while(true){
+            //获取消息，如果没有消息，这一步将会一直阻塞
+//            Delivery delivery = consumer1.nextDelivery() ;
+//            String msg = new String(delivery.getBody()) ;  
+            //System.out.println(msg);
+//            System.out.println("received message[" + msg + "] from " + queueName);
+//            Gson gson=new Gson();
+           // Recv01 re=gson.fromJson(msg, Recv01.class);
+//            String state="rabbitmqmap.userMapper.insertUser";
+ //           User user=gson.fromJson(msg, User.class);            
+//            session.insert(state,user);
+//            session.commit();
+            
+           // sql1="rabbitmqmap.userMapper.selectUser";
+          // System.out.println(session.selectList(sql1,1));
+           
+            //System.out.println(re.x);s
+           //sql1="insert into pos1 (x,y) values ('"+re.x+"','"+re.y+"')";
+            //stmt.executeUpdate(sql1);                  
+        }
+       //}catch()
+    }
+    

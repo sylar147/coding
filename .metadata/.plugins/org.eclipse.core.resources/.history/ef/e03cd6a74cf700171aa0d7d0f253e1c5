@@ -1,0 +1,19 @@
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Collectiontest {
+
+	public static void main(String[] args) {
+		// TODO 自动生成的方法存根
+		Collection c =new ArrayList();
+		c.add(1);
+		c.add("casd");
+		c.add(true);
+		for (int i=0;i<c.size();i++){
+			
+			System.out.println(((ArrayList) c).get(i));			
+		}
+			
+	}
+
+}

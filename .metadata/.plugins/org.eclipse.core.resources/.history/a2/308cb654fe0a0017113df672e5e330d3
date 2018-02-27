@@ -1,0 +1,67 @@
+package rabbit;
+
+
+
+import java.io.IOException;
+import java.sql.Struct;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+/**
+ * 发送消息
+ * @author zhoufeng
+ *
+ */
+class position{
+	int x;
+	int y;
+	public int setX(int x){return x;}
+	public int setY(int y){return y;}
+	public <var> String getpos(var x,var y){
+		String s1=x.toString();
+		String s2=y.toString();
+		return  "("+s1+","+s2+")";
+		
+	}
+	
+}
+public class Sender01 {
+	
+		
+    
+    public static <var> void main(String[] args) throws IOException {
+        
+        ConnectionFactory connFac = new ConnectionFactory() ;
+        
+        //RabbitMQ-Server安装在本机，所以直接用127.0.0.1
+        connFac.setHost("127.0.0.1");
+        
+        //创建一个连接
+        Connection conn = connFac.newConnection() ;
+        
+        //创建一个渠道
+        Channel channel = conn.createChannel() ;
+        
+        //定义Queue名称
+        String queueName = "queue01" ;
+        position pos=new position();
+        //为channel定义queue的属性，queueName为Queue名称
+        channel.queueDeclare( queueName , false, false, false, null) ;
+        for(int i=0;i<300;i++){
+        double x=1211000000+Math.random()*50000000;
+        double y=1211000000+Math.random()*40000000;
+        String msg = pos.getpos(x, y);
+        
+        //发送消息
+        channel.basicPublish("", queueName , null , msg.getBytes());
+        
+        System.out.println("send message[" + msg + "] to "+ queueName +" success!");}
+        
+        channel.close();
+        conn.close();
+        
+    }
+
+}

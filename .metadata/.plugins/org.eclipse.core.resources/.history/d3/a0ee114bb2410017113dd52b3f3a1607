@@ -1,0 +1,75 @@
+package rabbit;
+
+
+
+import java.io.IOException;
+import java.sql.Struct;
+import java.util.Random;
+
+import com.google.gson.Gson;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import net.sf.json.groovy.GJson;
+/**
+ * 发送消息
+ * @author zhoufeng
+ *
+ */
+
+public class Sender01 {
+	public static <var> String getpos(var x,var y){
+		String s1=x.toString();
+		String s2=y.toString();
+		return  "{\"中\":\""+s1+"\",\"文\":\""+s2+"\"}";
+		
+	}
+		
+    
+    public static  void main(String[] args) throws IOException {
+    	Thread thread=new Thread();
+    	//Random ra=new Random(1000);
+        ConnectionFactory connFac = new ConnectionFactory() ;
+        Gson gs=new Gson();
+        
+        //RabbitMQ-Server安装在本机，所以直接用127.0.0.1
+        connFac.setHost("127.0.0.1");
+        
+        //创建一个连接
+        Connection conn = connFac.newConnection() ;
+        
+        //创建一个渠道
+        Channel channel = conn.createChannel() ;
+        
+        boolean durable=true;
+        //定义Queue名称
+        String queueName = "queue01" ;
+        //position pos=new position();vim
+        //为channel定义queue的属性，queueName为Queue名称
+        channel.queueDeclare( queueName , durable, false, false, null);
+        //System.out.println("1");
+        //for(int i=0;i<300;i++){
+        
+        
+        //发送消息
+    
+       while(true){
+    	   try {
+			thread.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+    	   double x=Math.random()*17+105;
+           double y=Math.random()*10+15;
+           String msg = getpos(x, y);
+           String msg1=gs.toJson(msg);
+           channel.basicPublish("", queueName , null , msg1.getBytes());
+        
+           System.out.println("send message" + msg + " to "+ queueName +" success!");
+        
+        }
+        
+    }
+
+}
